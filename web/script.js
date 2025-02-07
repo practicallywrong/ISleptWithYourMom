@@ -1,33 +1,24 @@
-document.getElementById("start-button").addEventListener("click", () => {
-    goFullscreen();
-    startFucking();
+document.getElementById("start-button").addEventListener("click", async () => {
+    await goFullscreen();
+    await startFucking();
 });
 
 function goFullscreen() {
     let element = document.documentElement;
 
     if (element.requestFullscreen) {
-        element.requestFullscreen();
+        return element.requestFullscreen();
     } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
+        return element.mozRequestFullScreen();
     } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
+        return element.webkitRequestFullscreen();
     } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen();
+        return element.msRequestFullscreen();
     }
 }
 
-function startFucking() {
-
+async function startFucking() {
     document.getElementById("start-screen").remove();
-
-    function playSound() {
-        let audio = new Audio("https://www.myinstants.com/media/sounds/rick-roll-bass-boosted_ZPqkNIT.mp3");
-        audio.loop = true;
-        audio.play();
-    }
-
-    playSound();
 
     function createText() {
         let text = document.createElement("div");
@@ -43,7 +34,23 @@ function startFucking() {
         moveText();
         setInterval(moveText, 100);
     }
-    
+
+    async function playSound() {
+        return new Promise((resolve) => {
+            let audio = new Audio("https://www.myinstants.com/media/sounds/rick-roll-bass-boosted_ZPqkNIT.mp3");
+            audio.loop = true;
+
+            audio.oncanplaythrough = () => {
+                audio.play();
+                resolve();
+            };
+
+            audio.load();
+        });
+    }
+
+    await playSound();
+
     createText();
 
     setInterval(() => {
